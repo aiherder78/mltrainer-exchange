@@ -1,5 +1,5 @@
 {
-  "name": "expres-server",
+  "name": "MLTrainer-Exchange",
   "version": "1.0.0",
   "description": "Frontend UI for machine learning services.",
   "main": "index.js",
@@ -22,6 +22,6 @@
      "rethinkdb": "^2.3.3"
    },
    "dependenciesComments": {
-     "greenlock-express": "https://github.com/Daplie/greenlock-express/blob/master/ package.json, AJ ONeal <aj@daplie.com> (https://daplie.com/), MIT or Apache 2.0"
+     "greenlock-express": "https://github.com/Daplie/greenlock-express/, AJ ONeal <aj@daplie.com> (https://daplie.com/), MIT or Apache 2.0"
    }
 }
