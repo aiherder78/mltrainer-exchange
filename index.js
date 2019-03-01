@@ -12,6 +12,8 @@
 function approveDomains(opts, certs, cb) {
    console.log(opts);
 
+    //This if statement uses a regular expression -
+    //If the opts.domains does not have a match for it, you get an error.
    if (!/^(www\.)?metaquest\.org$/.test(opts.domains)) {
       cb(new Error("no config found for '" + opts.domain + "'"));
       return;
