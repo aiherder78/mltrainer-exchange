@@ -35,7 +35,7 @@ Edit index.js again and change the value of rethinkdbPort to the port that rethi
 
 STARTING THE SERVER:
 
-From this folder, just do:
+From a command line at the repo's main folder:
 
 "node index.js"
 That will run greenlock-express and its listener and then pass control to app.js
