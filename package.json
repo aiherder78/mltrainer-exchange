@@ -4,7 +4,7 @@
   "description": "Frontend UI for machine learning services.",
   "main": "index.js",
   "scripts": {
-    "start": "npm install && node index.js"
+    "start": "npm install && node server.js"
   },
   "scriptsComments": {
     "start": "Runs development build on a local server configured by server.js"
