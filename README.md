@@ -49,4 +49,5 @@ If you want to test it locally on your machine for development / debugging (make
 
 
 TODO:  Finish database method refactoring / putting it in a module
+
 TODO:  Create package.json with all modules needed so we can change "npm install greenlock-express express rethinkdb" to just "npm install".
