@@ -1,0 +1,27 @@
+{
+  "name": "expres-server",
+  "version": "1.0.0",
+  "description": "Frontend UI for machine learning services.",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm install && node index.js"
+  },
+  "scriptsComments": {
+    "start": "Runs development build on a local server configured by server.js"
+  },
+  "author": "aiherder78@gmail.com",
+  "license": "ISC",
+  "repository": {
+     "type": "git",
+     "url": "https://github.com/aiherder78/mltrainer-exchange/"
+   },
+   "homepage": "https://github.com/aiherder78/mltrainer-exchange#readme",
+   "dependencies": {
+     "express": "^4.16.3",
+     "greenlock-express":  "^2.0.11",
+     "rethinkdb": "^2.3.3"
+   },
+   "dependenciesComments": {
+     "greenlock-express": "https://github.com/Daplie/greenlock-express/blob/master/ package.json, AJ ONeal <aj@daplie.com> (https://daplie.com/), MIT or Apache 2.0"
+   }
+}
