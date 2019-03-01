@@ -51,6 +51,7 @@ If you want to test it locally on your machine for development / debugging (make
 "nodemon app.js"  --> this is not secure if it's a publicly open port, because it will be transmitted over http instead of https
 
 TODO:  Finish database method refactoring / putting it in a module
+https://stackoverflow.com/questions/30142041/create-a-database-if-is-needed-in-rethinkdb
 
 TODO:  Maybe delete all the database methods and just use an ORM like Thinky:  https://github.com/neumino/thinky
            -->  I could move my functions to a separate module and then include thinky instead.
