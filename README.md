@@ -5,6 +5,7 @@ INITIALIZATION OF PROJECT:
 Prereq - you should have Node.js installed.
 From a command line at the main folder of this repo:  "npm install greenlock-express express rethinkdb".
 Description of the above commmand:  greenlock-express is the module that handles getting certificates from Let's Encrypt when the index.js starts.  Express handles the url routes.  RethinkDB installs the javascript drivers so the script can talk to the database engine.
+
 Next, edit these lines in index.js to your own email & domain:
 if (!/^(www\.)?metaquest\.org$/.test(opts.domains)) {     <-- change this regex to test for your own domain:
      There's a \ before every '.' in your domain.  The $/. marks the end of the regular expression.
