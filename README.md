@@ -54,4 +54,4 @@ TODO:  Finish database method refactoring / putting it in a module
 https://stackoverflow.com/questions/30142041/create-a-database-if-is-needed-in-rethinkdb
 Maybe delete all the database methods and just use an ORM like Thinky:  https://github.com/neumino/thinky
            -->  I could move my functions to a separate module and then include thinky instead.
-I was watching Youtube videos / tutorials on Thinky, and I found that the driver that Thinky uses, rethinkdbdash ( https://github.com/neumino/rethinkdbdash ) is much better than the one I was using (npm install rethinkdb).  Rethinkdbdash has a connection pool and automatically connects / stays available, unlike rethinkdb driver.  That may solve my problem entirely.
+I was watching Youtube videos / tutorials on Thinky ( https://www.youtube.com/watch?v=d01rLeIjTLE ), and I found that the driver that Thinky uses, rethinkdbdash ( https://github.com/neumino/rethinkdbdash ) is much better than the one I was using (npm install rethinkdb).  Rethinkdbdash has a connection pool and automatically connects / stays available, unlike rethinkdb driver.  That may solve my problem entirely.
