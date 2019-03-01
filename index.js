@@ -61,8 +61,7 @@ var greenlock = require('greenlock-express').create({
 //, communityMember: true
 
 //, debug: true
-
-
+    
 });
 
 var server = greenlock.listen(80, 443);
