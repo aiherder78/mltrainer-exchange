@@ -21,7 +21,10 @@ opts.domains = ['metaquest.org'];   <-- change to your own domain
 DATABASE INSTALLATION / SETUP:
 RethinkDB:  requirement for running in Docker - Docker of course must be installed.
 Alternatively, you can install rethinkdb directly without running in Docker, see the rethinkdb website for instructions.
-To download/start the engine in docker, no other steps required:  "docker run -d -P --name rethink1 rethinkdb"
+To download/start the engine in docker, no other steps required:  
+
+"docker run -d -P --name rethink1 rethinkdb"
+
 To list ports it's listening on (if on Linux):
 
 "docker container ls"
