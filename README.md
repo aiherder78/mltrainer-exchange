@@ -19,6 +19,7 @@ if (!/^(www\.)?metaquest\.org$/.test(opts.domains)) {     <-- change this regex 
 opts.domains = ['metaquest.org'];   <-- change to your own domain
 
 DATABASE INSTALLATION / SETUP:
+
 RethinkDB:  requirement for running in Docker - Docker of course must be installed.
 Alternatively, you can install rethinkdb directly without running in Docker, see the rethinkdb website for instructions.
 To download/start the engine in docker, no other steps required:  
