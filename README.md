@@ -13,7 +13,8 @@ Prereq - you should have Node.js installed.
 Next, edit these lines in server.js to your own email & domain:
 ----------------
 if (!/^(www\.)?metaquest\.org$/.test(opts.domains)) {     <-- change this regex to test for your own domain:
-     There's a \ before every '.' in your domain.  The $/. marks the end of the regular expression.
+     There's a \ before every '.' in your domain.  The $/. marks the end of the regular expression.  The /^ is the start of it.
+     The "www." is marked as optional (that's what the parenthesis followed by ? does).
      
 , email: 'aiherder@gmail.com'    <--- change to your own email
 
