@@ -3,65 +3,111 @@
 var express = require('express');
 var app = express();
 
-//This is our db context / driver and config vars,
-//We'll connect it to the database immediately so we have access to the db in our functions below.
-var rethinkdb = require('rethinkdb');
+//Database related config:
+//https://github.com/neumino/rethinkdbdash
 var rethinkdbHost = 'localhost';
 var rethinkdbDatabaseName = 'test';
 var rethinkdbPort = 32772;
-var connection = null;
+
+//rethinkdbdash has a connection pool that will prevent the process from exiting, so I will use node-cleanup to handle draining the pool on process kill.
+//https://github.com/jtlapp/node-cleanup
+var nodeCleanup = require('node-cleanup');
+
+//Now this function will get called when the process gets killed:
+nodeCleanup(function (exitCode, signal) {
+  //I don't care about either of the arguments, but that's from the repo's example.
+  r.getPoolMaster().drain(); //from the instructions on rethinkdbdash repo:  https://github.com/neumino/rethinkdbdash 
+});
+
+//TODO:  Make a dbinit function that first checks for the dbName, creates it if it doesn't exist, then makes the connection here.
+var r = require('rethinkdbdash')({
+   port: rethinkdbPort,
+   host: rethinkdbHost,
+   db: rethinkdbDatabaseName
+});
+
+//This will cause problems if I try to do it with the rest - the way the examples I've seen for rethinkdbdash work,
+//The context needs to be given an existing database or none at all - with none, you can do this. 
+/*
+function dbCreate(dbName){
+   r.dbCreate(dbName)
+     .run()
+     .then(function(response)){
+        console.log(response);
+     }
+     .error(function(error)){
+        console.log('An error occurred during database creation at app.js dbCreate(): ', error);
+     });
+}*/
 
 //This will have to be called to run, I think I'll make an Express route for it, and we can initialize the database from our browsers by calling that url.
-function databaseInit(){
-   //connectDatabase();
-   dbCreateTables(['courses', 'students', 'teachers']);
-}
-
-//This runs immediately, storing the db connection in the connection var above.
-function connectDatabase(){
-   connection =  rethinkdb.connect({host: rethinkdbHost, port: rethinkdbPort}, function(err, conn) {
-      if (err) throw err;
-   });
-}
-
-function dbCreateTables(tableList){
-   var arrayLength = tableList.length;
-   //Loop through the list of tables and create each table in the database
-   connectDatabase();
-   for (var i = 0; i < arrayLength; i++){    //https://stackoverflow.com/questions/3010840/loop-through-an-array-in-javascript
-      rethinkdb(rethinkdbDatabaseName).tableCreate(tableList[i]).run(/*connection*/ connectDatabase(), function(err, result){
-         if (err) throw err;
-         console.log(JSON.stringify(result, null, 2));   //https://www.rethinkdb.com/docs/guide/javascript
-      });
+function dbInit(){
+   tables = ['courses', 'students', 'teachers'];
+   for (var i = 0; i < tables.length; i++){
+     dbTableCreate(tables[i]);
    }
-   connection.close();
+}
+
+function dbTableCreate(tblName){
+   r.tableCreate(tblName, { primaryKey: "id" })
+     .run()
+     .then(function(response)){
+        console.log('dbTableCreate() success: ', response);
+     }
+     .error(function(error)){
+        console.log('An error occurred app.js dbTableCreate(): ', error);
+     });
 }
 
 //With NoSQL type databases, you always just insert JSON objects (or an array of them) and don't have to worry about specific schema / columns on a table.  That can be good and/or bad.  You'll see.
-function dbInsert(tableName, json){
-   connectDatabase();
-   rethinkdb.table(tableName).insert(json).run(connection, function(err, result) {
-     if (err) throw err;
-     console.log(JSON.stringify(result, null, 2));
-     //return JSON.stringify(result, null, 2);
-   });
-   connection.close();
+function dbInsert(tblName, json){
+   r.table(tblName)
+     .insert(json)
+     .run()
+     .then(function(response)){
+        console.log('dbInsert() success: ', response);
+     }
+     .error(function(error)){
+        console.log('An error occurred at app.js dbInsert(): ', error);
+     });
 }
 
-function dbGetAll(tableName){
-   connectDatabase();
-   result = rethinkdb.run(connection, function(err, cursor) {
-      if (err) throw err;
-      cursor.toArray(function(err, result) {
-         if (err) throw err;
-         //console.log(JSON.stringify(result, null, 2));
-         //return JSON.stringify(result, null, 2);  //????
+function dbGetAll(tblName){
+   r.table(tblName)
+     .run()
+     .then(function(response)){
+        console.log('dbGetAll() success: ', response);
+     }
+     .error(function(error)){
+        console.log('An error occurred at app.js dbGetAll(' + tblName + '): ', error);
+     });
+}
+
+function dbGetById(tblName, id){
+    r.table(tblName)
+      .get(id)
+      .run()
+      .then(function(response)){
+        console.log('dbGetById() success: ', response);
+      }
+      .error(function(error)){
+        console.log('An error occurred at app.js dbGetById(' + tblName + '): ', error);
       });
-   });
-   connection.close();
-   return result;
 }
 
+//I don't know how to do this yet just using the rethinkdbdash driver
+/*
+function dbUpdate(tblName, json){
+}*/
+
+//I'm hoping I don't have to do anything really weird with writable streams
+/*
+function dbDelete(tblName, json){
+}*/
+
+// Same thing here - this is the old way with the rethinkdb driver vs rethinkdbdash.
+// I don't yet know how to do a filtering query with rethinkdbdash
+/*
 function dbQuery(tableName, propertyName, valueToFilterBy){
    rethinkdb.table(tableName).filter(rethinkdb.row(propertyName).eq(valueToFilterBy)).
      run(connection, function(err, cursor) {
@@ -72,15 +118,7 @@ function dbQuery(tableName, propertyName, valueToFilterBy){
            return JSON.stringify(result, null, 2);
         });
     });
-}
-
-function dbGetById(tableName, id){
-   rethinkdb.table(tableName).get(id).
-     run(connection, function(err, result) {
-        if (err) throw err;
-        return JSON.stringify(result, null, 2);
-    });
-}
+}*/
 
 //function dbUpdateById(tableName, id, json){
 //Need more update functions - see documentation and above examples
@@ -98,10 +136,15 @@ app.get ('/api/courses', (req, res) => {
    res.send([1,2,3]);
 });
 
+app.get('/api/teachers', (req, res) => {
+   res.send(dbGetAll('teachers');
+});
+
 //Example calling url:  https://metaquest.org/api/courses/3
+/*
 app.get ('/api/courses/:id', (req, res) => {
    res.send(req.params.id);
-});
+});*/
 
 //Example calling url:  https://metaquest.org/api/courses/2019/3
 app.get ('/api/courses/:year/:month', (req, res) => {
@@ -129,20 +172,14 @@ app.get ('/api/insertCourse', (req, res) => {
    res.send('OK');
 });
 
-
-
 app.get ('/api/insertTeacher', (req, res) => {
    dbInsert('teacher', req.query);
    res.send('OK');
 });
 
-app.get ('/api/initdb', (req, res) => {
-   databaseInit();
+app.get ('/api/dbinit', (req, res) => {
+   dbInit();
    res.send('OK');
-});
-app.get ('/api/dbConnTest', (req, res) => {
-    console.log(JSON.stringify(connectDatabase(), null, 2));
-    res.send('OK');
 });
 
 module.exports = app;
