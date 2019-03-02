@@ -9,16 +9,6 @@ var rethinkdbHost = 'localhost';
 var rethinkdbDatabaseName = 'test';
 var rethinkdbPort = 32772;
 
-//rethinkdbdash has a connection pool that will prevent the process from exiting, so I will use node-cleanup to handle draining the pool on process kill.
-//https://github.com/jtlapp/node-cleanup
-var nodeCleanup = require('node-cleanup');
-
-//Now this function will get called when the process gets killed:
-nodeCleanup(function (exitCode, signal) {
-  //I don't care about either of the arguments, but that's from the repo's example.
-  r.getPoolMaster().drain(); //from the instructions on rethinkdbdash repo:  https://github.com/neumino/rethinkdbdash 
-});
-
 //TODO:  Make a dbinit function that first checks for the dbName, creates it if it doesn't exist, then makes the connection here.
 var r = require('rethinkdbdash')({
    port: rethinkdbPort,
@@ -26,16 +16,27 @@ var r = require('rethinkdbdash')({
    db: rethinkdbDatabaseName
 });
 
+//rethinkdbdash has a connection pool that will prevent the process from exiting, so I will use node-cleanup to handle draining the pool on process kill.
+//https://github.com/jtlapp/node-cleanup
+var nodeCleanup = require('node-cleanup');
+
+//Now this function will get called when the process gets killed:
+nodeCleanup(function (exitCode, signal) {
+  //I don't care about either of the arguments, but that's from the repo's example.
+  r.getPoolMaster().drain(); //from the instructions on rethinkdbdash repo:  https://github.com/neumino/rethinkdbdash
+});
+
+
 //This will cause problems if I try to do it with the rest - the way the examples I've seen for rethinkdbdash work,
 //The context needs to be given an existing database or none at all - with none, you can do this. 
 /*
 function dbCreate(dbName){
    r.dbCreate(dbName)
      .run()
-     .then(function(response)){
+     .then(function(response){
         console.log(response);
      }
-     .error(function(error)){
+     .error(function(error){
         console.log('An error occurred during database creation at app.js dbCreate(): ', error);
      });
 }*/
@@ -49,12 +50,12 @@ function dbInit(){
 }
 
 function dbTableCreate(tblName){
-   r.tableCreate(tblName, { primaryKey: "id" })
+   r.tableCreate(tblName, { primaryKey: 'id' })
      .run()
-     .then(function(response)){
+     .then(function(response){
         console.log('dbTableCreate() success: ', response);
      }
-     .error(function(error)){
+     .error(function(error){
         console.log('An error occurred app.js dbTableCreate(): ', error);
      });
 }
@@ -64,10 +65,10 @@ function dbInsert(tblName, json){
    r.table(tblName)
      .insert(json)
      .run()
-     .then(function(response)){
+     .then(function(response){
         console.log('dbInsert() success: ', response);
      }
-     .error(function(error)){
+     .error(function(error){
         console.log('An error occurred at app.js dbInsert(): ', error);
      });
 }
@@ -75,10 +76,10 @@ function dbInsert(tblName, json){
 function dbGetAll(tblName){
    r.table(tblName)
      .run()
-     .then(function(response)){
+     .then(function(response){
         console.log('dbGetAll() success: ', response);
      }
-     .error(function(error)){
+     .error(function(error){
         console.log('An error occurred at app.js dbGetAll(' + tblName + '): ', error);
      });
 }
@@ -87,42 +88,25 @@ function dbGetById(tblName, id){
     r.table(tblName)
       .get(id)
       .run()
-      .then(function(response)){
+      .then(function(response){
         console.log('dbGetById() success: ', response);
       }
-      .error(function(error)){
+      .error(function(error){
         console.log('An error occurred at app.js dbGetById(' + tblName + '): ', error);
       });
 }
 
 //I don't know how to do this yet just using the rethinkdbdash driver
 /*
+//json should have an id property set to the id of the corresponding db row.
 function dbUpdate(tblName, json){
 }*/
 
 //I'm hoping I don't have to do anything really weird with writable streams
 /*
+//json should have id property set to corresponding db row.
 function dbDelete(tblName, json){
 }*/
-
-// Same thing here - this is the old way with the rethinkdb driver vs rethinkdbdash.
-// I don't yet know how to do a filtering query with rethinkdbdash
-/*
-function dbQuery(tableName, propertyName, valueToFilterBy){
-   rethinkdb.table(tableName).filter(rethinkdb.row(propertyName).eq(valueToFilterBy)).
-     run(connection, function(err, cursor) {
-        if (err) throw err;
-        cursor.toArray(function(err, result) {
-           if (err) throw err;
-           //console.log(JSON.stringify(result, null, 2));
-           return JSON.stringify(result, null, 2);
-        });
-    });
-}*/
-
-//function dbUpdateById(tableName, id, json){
-//Need more update functions - see documentation and above examples
-//Then we need to make routes to them so we can send values...that and to the dbInsert as well.
 
 //Database stuff is done,
 //Let's do some Express routes:
