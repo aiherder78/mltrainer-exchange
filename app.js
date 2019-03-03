@@ -3,18 +3,22 @@
 var express = require('express');
 var app = express();
 
-//Database related config:
-//https://github.com/neumino/rethinkdbdash
-var rethinkdbHost = 'localhost';
-var rethinkdbDatabaseName = 'test';
-var rethinkdbPort = 32772;
-var passCode = "SetThisToSomeRandomGUID"; //This provides a thin layer of extra security to keep out newb hackers
+//Load the rethinkdb settings
+var fs = require('fs');
+var rethinkdbConfig = JSON.parse(fs.readFileSync('rethinkDB.config', 'utf8'));
 
+//Database related config:
+//var rethinkdbHost = 'localhost';
+//var rethinkdbDatabaseName = 'test';
+//var rethinkdbPort = 28015 or whatever port that is mapped to on your host from the container if you are using Docker - see the README on the mltrainer-exchange repo for instructions;
+var passCode = rethinkdbConfig.PassCode;  //This provides a thin layer of extra security to keep out newb hackers
+
+//https://github.com/neumino/rethinkdbdash
 //TODO:  Make a dbinit function that first checks for the dbName, creates it if it doesn't exist, then makes the connection here.
 var r = require('rethinkdbdash')({
-   port: rethinkdbPort,
-   host: rethinkdbHost,
-   db: rethinkdbDatabaseName
+   port: rethinkdbConfig.Port,
+   host: rethinkdbConfig.Host,
+   db: rethinkdbConfig.DatabaseName
 });
 
 //rethinkdbdash has a connection pool that will prevent the process from exiting, so I will use node-cleanup to handle draining the pool on process kill.
