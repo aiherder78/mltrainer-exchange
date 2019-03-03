@@ -54,7 +54,7 @@ function dbTableCreate(tblName){
      .run()
      .then(function(response){
         console.log('dbTableCreate() success: ', response);
-     }
+     })
      .error(function(error){
         console.log('An error occurred app.js dbTableCreate(): ', error);
      });
@@ -67,7 +67,7 @@ function dbInsert(tblName, json){
      .run()
      .then(function(response){
         console.log('dbInsert() success: ', response);
-     }
+     })
      .error(function(error){
         console.log('An error occurred at app.js dbInsert(): ', error);
      });
@@ -78,7 +78,7 @@ function dbGetAll(tblName){
      .run()
      .then(function(response){
         console.log('dbGetAll() success: ', response);
-     }
+     })
      .error(function(error){
         console.log('An error occurred at app.js dbGetAll(' + tblName + '): ', error);
      });
@@ -90,7 +90,7 @@ function dbGetById(tblName, id){
       .run()
       .then(function(response){
         console.log('dbGetById() success: ', response);
-      }
+      })
       .error(function(error){
         console.log('An error occurred at app.js dbGetById(' + tblName + '): ', error);
       });
