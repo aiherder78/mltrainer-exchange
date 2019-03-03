@@ -200,5 +200,3 @@ function dbDelete(res, tblName, filter){
          sendDbMsg(res, "Got an error during delete", "dbDelete() error" + tblName + ", filter:: " + filter);
       });
 }
-
-}; //end module.exports function
