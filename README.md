@@ -40,13 +40,21 @@ and/or
 
 Create a new file called "rethinkDB.config"
 Contents should be as follows (include the brackets but not the dashed lines - pay attention to the values below...you have to change them to your own):
+
 -----------------------------
+
 {
+
    "Port":  "the port number you found above",
+   
    "Host":  "localhost",
+   
    "DatabaseName":  "test",
+   
    "PassCode":  "your random guid - you can just mash a bunch of keys to make it - make it long"
+   
 }
+
 ------------------------------
 You may want to make a .gitignore file and put the name of the above file, rethinkDB.config, in it so that if you commit this to your own repo, it won't be included.
 
