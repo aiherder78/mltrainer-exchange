@@ -32,7 +32,7 @@ function dbCreate(dbName){
      .run()
      .then(function(response){
         console.log(response);
-     }
+     })
      .error(function(error){
         console.log('An error occurred during database creation at app.js dbCreate(): ', error);
      });
