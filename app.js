@@ -121,7 +121,7 @@ app.get ('/api/courses', (req, res) => {
 });
 
 app.get('/api/teachers', (req, res) => {
-   res.send(dbGetAll('teachers');
+   res.send(dbGetAll('teachers'));
 });
 
 //Example calling url:  https://metaquest.org/api/courses/3
