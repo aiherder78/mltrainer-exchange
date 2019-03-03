@@ -2,10 +2,12 @@
 
 var express = require('express');
 var app = express();
-var rethink = require('rdb');
-var rdb = rethink();
+var rdb = require('./rdb.js');
+//var rdb = rethink();
 
-var passCode = rdb.rethinkDbConfig.PassCode; //not sure if this will work...
+console.log(JSON.stringify(rdb));
+
+//var passCode = rdb.GetPassCode();
 
 //Database stuff is done,
 //Let's do some Express routes:

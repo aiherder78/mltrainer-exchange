@@ -1,6 +1,25 @@
+exports.GetPassCode = GetPassCode();
+exports.dbCreate = dbCreate;
+exports.dbDelete;
+exports.dbList;
+exports.dbSwitch;
+exports.dbInit;
+exports.dbCreateTable;
+exports.dbDeleteTable;
+exports.dbInsert;
+exports.dbGetAll;
+exports.dbReplace;
+exports.dbQuery;
+exports.dbUpdate;
+
+
 //Load the rethinkdb settings
 var fs = require('fs');
 var rethinkdbConfig = JSON.parse(fs.readFileSync('rethinkDB.config', 'utf8'));
+
+function GetPassCode(){
+   return rethinkdbConfig.PassCode;
+}
 
 //https://github.com/neumino/rethinkdbdash
 //TODO:  Make a dbinit function that first checks for the dbName, creates it if it doesn't exist, then makes the connection here.
@@ -183,4 +202,4 @@ function dbDelete(res, tblName, filter){
       });
 }
 
-module.exports = rdb;
+}; //end module.exports function
