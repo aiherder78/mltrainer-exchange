@@ -197,6 +197,20 @@ app.get ('/', (req, res) => {
    res.send('Hello World 2!');
 });
 
+//Positional paramters
+app.get ('/IdontHaveAurl/:arbitraryString', (req, res) => {
+   var name = req.params.arbitraryString;
+   //var query = req.query;
+   res.send('OK' + name);
+});
+
+//Query string
+app.get ('/api2', (req, res) => {
+   var name = req.query.name;
+   var age = req.query.age;
+   res.send('OK ' + name + ', ' + age);
+});
+
 app.get ('/api/:pass/:tblName/:operation/:filterOrJson/:json', (req, res) => {
    var tblName = req.params.tblName;
    var operation = req.params.operation;
