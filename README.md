@@ -43,6 +43,8 @@ and/or
 "ss -taulpn"
 
 Edit app.js again and change the value of rethinkdbPort to the port that rethinkDB's docker container port 28015 is mapped to.
+Change the passCode to a random guid - this gives you your own security layer so only you can interact directly with your db from your browser.
+
 ---------------
 
 app.js is an Express starter template (I watched Mosh's latest video on the subject) with some rethinkDB methods added on - note that at this time, I still have some work to do on the db connection method before that will work - right now it's blowing up and spitting out a ton of errors into the log when the dbinit route is called.  After I do that refactoring, I will refactor the database methods into a different module and get rid of the routes directly exposing the database.
@@ -52,7 +54,9 @@ If you want to test it locally on your machine for development / debugging (make
 "nodemon app.js"  --> this is not secure if it's a publicly open port, because it will be transmitted over http instead of https
 
 TODO:  Finish database method refactoring / putting it in a module
-https://stackoverflow.com/questions/30142041/create-a-database-if-is-needed-in-rethinkdb
 Maybe delete all the database methods and just use an ORM like Thinky:  https://github.com/neumino/thinky
-           -->  I could move my functions to a separate module and then include thinky instead.
-I was watching Youtube videos / tutorials on Thinky ( https://www.youtube.com/watch?v=d01rLeIjTLE ), and I found that the driver that Thinky uses, rethinkdbdash ( https://github.com/neumino/rethinkdbdash ) is much better than the one I was using (npm install rethinkdb).  Rethinkdbdash has a connection pool and automatically connects / stays available, unlike rethinkdb driver.  That may solve my problem entirely.
+
+Notes:
+DONE:
+I was watching Youtube videos / tutorials on Thinky ( https://www.youtube.com/watch?v=d01rLeIjTLE ), and I found that the driver that Thinky uses, rethinkdbdash ( https://github.com/neumino/rethinkdbdash ) is much better than the one I was using (npm install rethinkdb).  Rethinkdbdash has a connection pool and automatically connects / stays available, unlike rethinkdb driver.  
+I have switched out the standard rethinkdb driver for this one.
