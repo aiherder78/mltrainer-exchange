@@ -1,17 +1,16 @@
 exports.GetPassCode = GetPassCode();
 exports.dbCreate = dbCreate;
-exports.dbDelete;
-exports.dbList;
-exports.dbSwitch;
-exports.dbInit;
-exports.dbCreateTable;
-exports.dbDeleteTable;
-exports.dbInsert;
-exports.dbGetAll;
-exports.dbReplace;
-exports.dbQuery;
-exports.dbUpdate;
-
+exports.dbDelete = dbDelete;
+exports.dbList = dbList;
+exports.dbSwitch = dbSwitch;
+exports.dbInit = dbInit;
+exports.dbCreateTable = dbCreateTable;
+exports.dbDeleteTable = dbDeleteTable;
+exports.dbInsert = dbInsert;
+exports.dbGetAll = dbGetAll;
+exports.dbReplace = dbReplace;
+exports.dbQuery = dbQuery;
+exports.dbUpdate = dbUpdate;
 
 //Load the rethinkdb settings
 var fs = require('fs');
