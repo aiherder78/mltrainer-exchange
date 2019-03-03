@@ -2,6 +2,10 @@
 
 var express = require('express');
 var app = express();
+var rethink = require('rdb');
+var rdb = rethink();
+
+var passCode = rdb.rethinkDbConfig.PassCode; //not sure if this will work...
 
 //Database stuff is done,
 //Let's do some Express routes:
@@ -32,26 +36,26 @@ app.get ('/api/:pass/:tblName/:operation/:filterOrJson/:json', (req, res) => {
    if (pass != null && pass == passCode && tblName != null){
      if (operation != null){
          if (operation == "query"){
-             dbQuery(res, tblName, filterOrJson);
+             rdb.dbQuery(res, tblName, filterOrJson);
          }
          else if (operation == "new"){
-             dbInsert(res, tblName, filterOrJson);
+             rdb.dbInsert(res, tblName, filterOrJson);
          }
          else if (operation == "update"){
-             dbUpdate(res, tblName, filterOrJson, json);
+             rdb.dbUpdate(res, tblName, filterOrJson, json);
          }
          else if (operation == "replace"){
-             dbReplace(res, tblName, json);
+             rdb.dbReplace(res, tblName, json);
          }
          else if (operation == "delete"){
-             dbDelete(res, tblName, filterOrJson);
+             rdb.dbDelete(res, tblName, filterOrJson);
          }
          else {
              res.send("Invalid operation - must be one of: (query, new, update, delete, createTable, deleteTable)");
          }
       }
       else {
-         dbGetAll(res, tblName);
+         rdb.dbGetAll(res, tblName);
       }
    }
    else {
@@ -66,23 +70,23 @@ app.get('/smashGlass/:pass/:database/:operation/:filter', (req, res) => {
    if (pass != null && pass == passCode){
       if (database != null){
          if (operation == "switch" && filter != null){
-            dbSwitch(filter);
+            rdb.dbSwitch(filter);
          }
          else if (operation == "listDatabases"){
-            dbList();
+            rdb.dbList();
          }
          else if (operation == "createDb" && filter != null){
-            dbCreate(filter);
+            rdb.dbCreate(filter);
          }
          else if (operation == "deleteDb" && filter != null){
             //Perform a db backup first, send a two-factor auth first & get approval before deleting
             //https://www.rethinkdb.com/api/javascript/db_drop/
          }
          else if (operation == "listTables"){
-            dbList(res);
+            rdb.dbList(res);
          }
          else if (operation == "createTable" && filter != null){
-            dbCreateTable(res, filter);
+            rdb.dbCreateTable(res, filter);
          }
          else if (operation == "deleteTable" && filter != null){
             //dbDeleteTable(res, filter);
