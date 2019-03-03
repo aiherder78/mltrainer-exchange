@@ -69,19 +69,23 @@ function dbInsert(tblName, json){
      });
 }
 
-function dbGetAll(tblName){
+function dbGetAll(tblName, res){
+   var returnResponse = "No rows exist.";
    r.table(tblName)
      .run()
      .then(function(response){
-        console.log('dbGetAll() success on table: ' + tblName);
-        return response;
+        if (response != null && response.length > 0){
+           returnResponse = JSON.stringify(response);
+        }
+        console.log('dbGetAll() success on table: ' + tblName + ', ' + returnResponse);
+        res.send(returnResponse);
      })
      .error(function(error){
         consoleLog = 'An error occurred at app.js dbGetAll(' + tblName + '): ', error;
         console.log(consoleLog);
 
-        errorResponse = 'An error occurred attempting to retrieve the table';
-        return errorResponse
+        returnResponse = 'An error occurred attempting to retrieve the table';
+        res.send(returnResponse);
      });
 }
 
@@ -122,7 +126,7 @@ app.get ('/api/courses', (req, res) => {
 });
 
 app.get('/api/teachers', (req, res) => {
-   res.send(dbGetAll('teachers'));
+   dbGetAll('teachers', res);
 });
 
 //Example calling url:  https://metaquest.org/api/courses/3
@@ -157,7 +161,7 @@ app.get('/api/createTable/:tableName', (req, res) => {
 app.get ('/api/getall/:tableName', (req, res) => {
    var tblName = req.params.tableName;
    if (tblName != null){
-      res.send(dbGetAll(tblName));
+      dbGetAll(tblName, res);
    }
    else {
       res.send('Please specify a table name');
@@ -165,17 +169,17 @@ app.get ('/api/getall/:tableName', (req, res) => {
 });
 
 app.get ('/api/insertStudent', (req, res) => {
-   dbInsert('student', req.query);
+   dbInsert('students', req.query);
    res.send('OK');
 });
 
 app.get ('/api/insertCourse', (req, res) => {
-   dbInsert('course', req.query);
+   dbInsert('courses', req.query);
    res.send('OK');
 });
 
 app.get ('/api/insertTeacher', (req, res) => {
-   dbInsert('teacher', req.query);
+   dbInsert('teachers', req.query);
    res.send('OK');
 });
 
