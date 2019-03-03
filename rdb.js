@@ -1,3 +1,4 @@
+/*
 exports.GetPassCode = GetPassCode();
 exports.dbCreate = dbCreate;
 exports.dbDelete = dbDelete;
@@ -11,6 +12,8 @@ exports.dbGetAll = dbGetAll;
 exports.dbReplace = dbReplace;
 exports.dbQuery = dbQuery;
 exports.dbUpdate = dbUpdate;
+*/
+module.exports = function(){
 
 //Load the rethinkdb settings
 var fs = require('fs');
@@ -200,3 +203,5 @@ function dbDelete(res, tblName, filter){
          sendDbMsg(res, "Got an error during delete", "dbDelete() error" + tblName + ", filter:: " + filter);
       });
 }
+
+} //end module.export function
