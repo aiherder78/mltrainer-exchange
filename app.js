@@ -22,10 +22,9 @@ var nodeCleanup = require('node-cleanup');
 
 //Now this function will get called when the process gets killed:
 nodeCleanup(function (exitCode, signal) {
-  //I don't care about either of the arguments, but that's from the repo's example.
+  console.log("Received exitCode " + exitCode + ", signal " + signal);
   r.getPoolMaster().drain(); //from the instructions on rethinkdbdash repo:  https://github.com/neumino/rethinkdbdash
 });
-
 
 function dbCreate(dbName){
    r.dbCreate(dbName)
@@ -49,10 +48,21 @@ function dbCreateTable(tblName){
    r.tableCreate(tblName, { primaryKey: 'id' })
      .run()
      .then(function(response){
-        console.log('dbTableCreate() success: ', response);
+        console.log('dbCreateTable() success: ', response);
      })
      .error(function(error){
-        console.log('An error occurred app.js dbTableCreate(): ', error);
+        console.log('An error occurred app.js dbCreateTable(): ', error);
+     });
+}
+
+function dbDeleteTable(tblName){
+   r.tableDrop(tblName)
+     .run()
+     .then(function(response){
+        console.log('dbDeleteTable() success: ', response);
+     })
+     .error(function(error){
+        console.log('An error occurred app.js dbDeleteTable(), table ' + tblName + ': ', error);
      });
 }
 
@@ -89,6 +99,8 @@ function dbGetAll(tblName, res){
      });
 }
 
+//I would never do this - if I have an id, that means I already have the object
+//and may want to replace it...there's a replace method in rethinkdb / ReQL.
 function dbGetById(res, tblName, id){
     r.table(tblName)
       .get(id)
@@ -104,29 +116,29 @@ function dbGetById(res, tblName, id){
 
 //TODO:  Maybe I should just use Thinky....
 
-function dbQuery(res, tblName, json){
+function dbQuery(res, tblName, filter){
     //r.table(tblName).filter(db.row(json).downcase().match(title.toLowerCase()));   //TODO:  Figure out how to perform lowercase match for every property
     r.table(tblName)
-      .filter(db.row(json))
+      .filter(db.row(filter))
       .run()
       .then(function(response){
-         sendDbMsg(res, JSON.stringify(response), "dbQuery() success for " + tblName + ", " + json);
+         sendDbMsg(res, JSON.stringify(response), "dbQuery() success" + tblName + ", " + json);
       })
       .error(function(error){
-         sendDbMsg(res, "Got an error during query", "dbQuery() error on " + tblName + ", " + json);
+         sendDbMsg(res, "Got an error", "dbQuery() error" + tblName + ", " + json);
       });
 }
 
-function dbUpdate(tblName, filter, json){
+function dbUpdate(res, tblName, filter, json){
     r.table(tblName)
       .filter(db.row(filter))
       .update(json)
       .run()
       .then(function(response){
-         sendDbMsg(res, JSON.stringify(response), "dbUpdate() success for " + tblName + ", filter:: " + filter + ", update:: " + json);
+         sendDbMsg(res, JSON.stringify(response), "dbUpdate() success" + tblName + ", filter:: " + filter + ", update:: " + json);
       })
       .error(function(error){
-         sendDbMsg(res, "Got an error during query", "dbUpdate() error on " + tblName + ", filter:: " + filter + ", update::" + json);
+         sendDbMsg(res, "Got an error", "dbUpdate() error" + tblName + ", filter:: " + filter + ", update::" + json);
       });
 }
 
@@ -135,16 +147,16 @@ function sendDbMsg(res, message, methodCaller){
     res.send(message);
 }
 
-function dbDelete(tblName, filter){
+function dbDelete(res, tblName, filter){
     r.table(tblName)
       .filter(db.row(filter))
       .delete()
       .run()
       .then(function(response){
-         sendDbMsg(res, JSON.stringify(response), "dbDelete() success for " + tblName + ", filter:: " + filter);
+         sendDbMsg(res, JSON.stringify(response), "dbDelete() success" + tblName + ", filter:: " + filter);
       })
       .error(function(error){
-         sendDbMsg(res, "Got an error during delete", "dbDelete() error on " + tblName + ", filter:: " + filter);
+         sendDbMsg(res, "Got an error during delete", "dbDelete() error" + tblName + ", filter:: " + filter);
       });
 }
 
@@ -155,14 +167,16 @@ app.get ('/', (req, res) => {
    res.send('Hello World 2!');
 });
 
+/*
 //Example calling url:  https://metaquest.org/api/courses
 app.get ('/api/courses', (req, res) => {
    res.send([1,2,3]);
-});
+});*/
 
+/*
 app.get('/api/teachers', (req, res) => {
    dbGetAll('teachers', res);
-});
+});*/
 
 //Example calling url:  https://metaquest.org/api/courses/3
 /*
@@ -170,53 +184,113 @@ app.get ('/api/courses/:id', (req, res) => {
    res.send(req.params.id);
 });*/
 
+/*
 //Example calling url:  https://metaquest.org/api/courses/2019/3
 app.get ('/api/courses/:year/:month', (req, res) => {
    res.send(req.params);
    //Can't have more than one res.send, because that returns the data to the calling browser and exits the function.
    //res.send(req.params.year);  //But you can get to the individual parameters like this if you want to use them to do something else.
    //res.send(req.params.month);
-});
+});*/
 
+/*
 //Example calling url:  https://metaquest.org/ap/course/query?myQueryParameter=3
 app.get ('/api/query', (req, res) => {
    var me = req.query.me;
    console.log(me);
    res.send(req.query);
    //res.send('query received: ' + req.query);
-});
+});*/
 
-app.get('/api/createTable/:tableName', (req, res) => {
-   if (req.params.tableName != null){
-      dbCreateTable(req.params.tableName); 
-   }
-   res.send('OK');
-});
-
-app.get ('/api/getall/:tableName', (req, res) => {
-   var tblName = req.params.tableName;
-   if (tblName != null){
-      dbGetAll(tblName, res);
-   }
-   else {
-      res.send('Please specify a table name');
-   }
-});
-
-app.get ('/api/insertStudent', (req, res) => {
-   dbInsert('students', req.query);
-   res.send('OK');
-});
-
-app.get ('/api/insertCourse', (req, res) => {
-   dbInsert('courses', req.query);
-   res.send('OK');
-});
-
+/*
 app.get ('/api/insertTeacher', (req, res) => {
    dbInsert('teachers', req.query);
    res.send('OK');
+});*/
+
+app.get ('/api/:tblName/:operation/:filterOrJson/:json', (req, res) => {
+   var tblName = req.params.tblName;
+   var operation = req.params.operation;
+   var filterOrJson = req.params.filterOrJson;
+   var json = req.params.json;
+   
+   if (tblName != null){
+      if (operation != null){
+         if (operation == "query"){
+            dbQuery(res, tblName, filterOrJson);
+         }
+         else if (operation == "new"){
+            dbInsert(res, tblName, filterOrJson);
+         }
+         else if (operation == "update"){
+            dbUpdate(res, tblName, filterOrJson, json);
+         }
+         else if (operation == "replace"){
+            //TODO:  implement this function
+            //dbReplace(res, tblName, filterOrJson, json);
+         }
+         else if (operation == "delete"){
+            dbDelete(res, tblName, filterOrJson);
+         }
+         else {
+            res.send("Invalid operation - must be one of: (query, new, update, delete, createTable, deleteTable)");
+         }
+      }
+      else {
+         dbGetAll(res, tblName);
+      }
+   }
+   else {
+      res.send("?");
+   }
 });
+
+app.get('/smashGlass/:database/:operation/:filter', (req, res) => {
+   var database = req.params.database;
+   var operation = req.params.operation;
+
+   if (database != null){
+      if (operation == "switch" && filter != null){
+         //find code to switch database of connection
+         //implement a separate method for that and call it here
+      }
+      else if (operation == "listDatabases"){
+         //https://www.rethinkdb.com/api/javascript/db_list/
+      }
+      else if (operation == "createDb" && filter != null){
+         dbCreate(filter);
+      }
+      else if (operation == "deleteDb" && filter != null){
+         //Perform a db backup first, send a two-factor auth first & get approval before deleting
+         //https://www.rethinkdb.com/api/javascript/db_drop/
+      }
+      else if (operation == "listTables"){
+         //https://www.rethinkdb.com/api/javascript/table_list/
+      }
+      else if (operation == "createTable" && filter != null){
+         dbCreateTable(res, filter);
+      }
+      else if (operation == "deleteTable" && filter != null){
+         //dbDeleteTable(res, filter);
+      }
+      else if (operation == "backup"){
+         //Implment function for database backup to flat file
+         //Probably want file chunks per X size, then compress - each database backup should have its own folder under backups
+         //Backups should be stored on the separate volume
+      }
+      else if (operation == "restore" && filter != null){
+         //0.  Maybe add a filter for this operation that will be a number, and that's how many backups back to go, or if it's a date, restore the closest backup to that date
+         //1.  Create a new database named restoreFromBackup<Date><dbName>
+      }
+      else if (operation == "listBackups"){
+         //Implement this function
+      }
+      else if (operation == "pruneBackups" && filter != null){
+         //filter should have how many backups to keep.  Backups further back than that would be removed.
+      }
+   }
+   res.send("OK");
+}
 
 app.get ('/api/dbinit', (req, res) => {
    dbInit();
