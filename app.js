@@ -89,29 +89,64 @@ function dbGetAll(tblName, res){
      });
 }
 
-function dbGetById(tblName, id){
+function dbGetById(res, tblName, id){
     r.table(tblName)
       .get(id)
       .run()
       .then(function(response){
         console.log('dbGetById() success: ', response);
+        res.send(JSON.stringify(response));
       })
       .error(function(error){
-        console.log('An error occurred at app.js dbGetById(' + tblName + '): ', error);
+         sendDbMsg(res, "Got an error", "dbGetById() " + error);
       });
 }
 
-//I don't know how to do this yet just using the rethinkdbdash driver
-/*
-//json should have an id property set to the id of the corresponding db row.
-function dbUpdate(tblName, json){
-}*/
+//TODO:  Maybe I should just use Thinky....
 
-//I'm hoping I don't have to do anything really weird with writable streams
-/*
-//json should have id property set to corresponding db row.
-function dbDelete(tblName, json){
-}*/
+function dbQuery(res, tblName, json){
+    //r.table(tblName).filter(db.row(json).downcase().match(title.toLowerCase()));   //TODO:  Figure out how to perform lowercase match for every property
+    r.table(tblName)
+      .filter(db.row(json))
+      .run()
+      .then(function(response){
+         sendDbMsg(res, JSON.stringify(response), "dbQuery() success for " + tblName + ", " + json);
+      })
+      .error(function(error){
+         sendDbMsg(res, "Got an error during query", "dbQuery() error on " + tblName + ", " + json);
+      });
+}
+
+function dbUpdate(tblName, filter, json){
+    r.table(tblName)
+      .filter(db.row(filter))
+      .update(json)
+      .run()
+      .then(function(response){
+         sendDbMsg(res, JSON.stringify(response), "dbUpdate() success for " + tblName + ", filter:: " + filter + ", update:: " + json);
+      })
+      .error(function(error){
+         sendDbMsg(res, "Got an error during query", "dbUpdate() error on " + tblName + ", filter:: " + filter + ", update::" + json);
+      });
+}
+
+function sendDbMsg(res, message, methodCaller){
+    console.log(methodCaller + ":: " + message);
+    res.send(message);
+}
+
+function dbDelete(tblName, filter){
+    r.table(tblName)
+      .filter(db.row(filter))
+      .delete()
+      .run()
+      .then(function(response){
+         sendDbMsg(res, JSON.stringify(response), "dbDelete() success for " + tblName + ", filter:: " + filter);
+      })
+      .error(function(error){
+         sendDbMsg(res, "Got an error during delete", "dbDelete() error on " + tblName + ", filter:: " + filter);
+      });
+}
 
 //Database stuff is done,
 //Let's do some Express routes:
