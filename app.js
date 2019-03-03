@@ -7,10 +7,6 @@ var app = express();
 var fs = require('fs');
 var rethinkdbConfig = JSON.parse(fs.readFileSync('rethinkDB.config', 'utf8'));
 
-//Database related config:
-//var rethinkdbHost = 'localhost';
-//var rethinkdbDatabaseName = 'test';
-//var rethinkdbPort = 28015 or whatever port that is mapped to on your host from the container if you are using Docker - see the README on the mltrainer-exchange repo for instructions;
 var passCode = rethinkdbConfig.PassCode;  //This provides a thin layer of extra security to keep out newb hackers
 
 //https://github.com/neumino/rethinkdbdash
@@ -137,11 +133,10 @@ function dbGetAll(tblName, res){
      });
 }
 
-//I would never do this - if I have an id, that means I already have the object
-//and may want to replace it...there's a replace method in rethinkdb / ReQL.
-function dbGetById(res, tblName, id){
+function dbReplace(res, tblName, json){
     r.table(tblName)
-      .get(id)
+      .get(json.id)
+      .replace(json)
       .run()
       .then(function(response){
          sendDbMsg(res, response, "dbGetById(" + tblName + ") success");
@@ -219,8 +214,7 @@ app.get ('/api/:pass/:tblName/:operation/:filterOrJson/:json', (req, res) => {
              dbUpdate(res, tblName, filterOrJson, json);
          }
          else if (operation == "replace"){
-             //TODO:  implement this function
-             //dbReplace(res, tblName, filterOrJson, json);
+             dbReplace(res, tblName, json);
          }
          else if (operation == "delete"){
              dbDelete(res, tblName, filterOrJson);
