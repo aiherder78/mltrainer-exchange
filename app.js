@@ -248,35 +248,35 @@ app.get ('/api/:pass/:tblName/:operation/:filterOrJson/:json', (req, res) => {
    var json = req.params.json;
    
    if (pass != null && pass == passCode){
-   if (tblName != null){
-      if (operation != null){
-         if (operation == "query"){
-            dbQuery(res, tblName, filterOrJson);
-         }
-         else if (operation == "new"){
-            dbInsert(res, tblName, filterOrJson);
-         }
-         else if (operation == "update"){
-            dbUpdate(res, tblName, filterOrJson, json);
-         }
-         else if (operation == "replace"){
-            //TODO:  implement this function
-            //dbReplace(res, tblName, filterOrJson, json);
-         }
-         else if (operation == "delete"){
-            dbDelete(res, tblName, filterOrJson);
+      if (tblName != null){
+         if (operation != null){
+            if (operation == "query"){
+               dbQuery(res, tblName, filterOrJson);
+            }
+            else if (operation == "new"){
+               dbInsert(res, tblName, filterOrJson);
+            }
+            else if (operation == "update"){
+               dbUpdate(res, tblName, filterOrJson, json);
+            }
+            else if (operation == "replace"){
+               //TODO:  implement this function
+               //dbReplace(res, tblName, filterOrJson, json);
+            }
+            else if (operation == "delete"){
+               dbDelete(res, tblName, filterOrJson);
+            }
+            else {
+               res.send("Invalid operation - must be one of: (query, new, update, delete, createTable, deleteTable)");
+            }
          }
          else {
-            res.send("Invalid operation - must be one of: (query, new, update, delete, createTable, deleteTable)");
+            dbGetAll(res, tblName);
          }
       }
       else {
-         dbGetAll(res, tblName);
+         res.send("?");
       }
-   }
-   else {
-      res.send("?");
-   }
    }
 });
 
@@ -285,45 +285,45 @@ app.get('/smashGlass/:pass/:database/:operation/:filter', (req, res) => {
    var operation = req.params.operation;
 
    if (pass != null && pass == passCode){
-   if (database != null){
-      if (operation == "switch" && filter != null){
-         dbSwitch(filter);
+      if (database != null){
+         if (operation == "switch" && filter != null){
+            dbSwitch(filter);
+         }
+         else if (operation == "listDatabases"){
+            dbList();
+         }
+         else if (operation == "createDb" && filter != null){
+            dbCreate(filter);
+         }
+         else if (operation == "deleteDb" && filter != null){
+            //Perform a db backup first, send a two-factor auth first & get approval before deleting
+            //https://www.rethinkdb.com/api/javascript/db_drop/
+         }
+         else if (operation == "listTables"){
+            dbList(res);
+         }
+         else if (operation == "createTable" && filter != null){
+            dbCreateTable(res, filter);
+         }
+         else if (operation == "deleteTable" && filter != null){
+            //dbDeleteTable(res, filter);
+         }
+         else if (operation == "backup"){
+            //Implment function for database backup to flat file
+            //Probably want file chunks per X size, then compress - each database backup should have its own folder under backups
+            //Backups should be stored on the separate volume
+         }
+         else if (operation == "restore" && filter != null){
+            //0.  Maybe add a filter for this operation that will be a number, and that's how many backups back to go, or if it's a date, restore the closest backup to that date
+            //1.  Create a new database named restoreFromBackup<Date><dbName>
+         }
+         else if (operation == "listBackups"){
+            //Implement this function
+         }
+         else if (operation == "pruneBackups" && filter != null){
+            //filter should have how many backups to keep.  Backups further back than that would be removed.
+         }
       }
-      else if (operation == "listDatabases"){
-         dbList();
-      }
-      else if (operation == "createDb" && filter != null){
-         dbCreate(filter);
-      }
-      else if (operation == "deleteDb" && filter != null){
-         //Perform a db backup first, send a two-factor auth first & get approval before deleting
-         //https://www.rethinkdb.com/api/javascript/db_drop/
-      }
-      else if (operation == "listTables"){
-         dbList(res);
-      }
-      else if (operation == "createTable" && filter != null){
-         dbCreateTable(res, filter);
-      }
-      else if (operation == "deleteTable" && filter != null){
-         //dbDeleteTable(res, filter);
-      }
-      else if (operation == "backup"){
-         //Implment function for database backup to flat file
-         //Probably want file chunks per X size, then compress - each database backup should have its own folder under backups
-         //Backups should be stored on the separate volume
-      }
-      else if (operation == "restore" && filter != null){
-         //0.  Maybe add a filter for this operation that will be a number, and that's how many backups back to go, or if it's a date, restore the closest backup to that date
-         //1.  Create a new database named restoreFromBackup<Date><dbName>
-      }
-      else if (operation == "listBackups"){
-         //Implement this function
-      }
-      else if (operation == "pruneBackups" && filter != null){
-         //filter should have how many backups to keep.  Backups further back than that would be removed.
-      }
-   }
    }
    res.send("OK");
 });
@@ -335,12 +335,11 @@ app.get ('/api/dbinit', (req, res) => {
 
 module.exports = app;
 
+//This will let you run locally without doing the whole green-lock cert stuff,
+// While also being able to be started from index.js (the greenlock server that includes this
+// without starting the server on its own.
 if (require.main === module) {
    app.listen(3000, function() {
        console.log(this.address());
    });
 }
-
-//This will let you run locally without doing the whole green-lock cert stuff,
-// While also being able to be started from index.js (the greenlock server that includes this
-// without starting the server on its own.
