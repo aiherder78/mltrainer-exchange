@@ -147,8 +147,6 @@ function dbGetById(res, tblName, id){
       });
 }
 
-//TODO:  Maybe I should just use Thinky....
-
 function dbQuery(res, tblName, filter){
     //r.table(tblName).filter(db.row(json).downcase().match(title.toLowerCase()));   //TODO:  Figure out how to perform lowercase match for every property
     r.table(tblName)
@@ -200,83 +198,39 @@ app.get ('/', (req, res) => {
    res.send('Hello World 2!');
 });
 
-/*
-//Example calling url:  https://metaquest.org/api/courses
-app.get ('/api/courses', (req, res) => {
-   res.send([1,2,3]);
-});*/
-
-/*
-app.get('/api/teachers', (req, res) => {
-   dbGetAll('teachers', res);
-});*/
-
-//Example calling url:  https://metaquest.org/api/courses/3
-/*
-app.get ('/api/courses/:id', (req, res) => {
-   res.send(req.params.id);
-});*/
-
-/*
-//Example calling url:  https://metaquest.org/api/courses/2019/3
-app.get ('/api/courses/:year/:month', (req, res) => {
-   res.send(req.params);
-   //Can't have more than one res.send, because that returns the data to the calling browser and exits the function.
-   //res.send(req.params.year);  //But you can get to the individual parameters like this if you want to use them to do something else.
-   //res.send(req.params.month);
-});*/
-
-/*
-//Example calling url:  https://metaquest.org/ap/course/query?myQueryParameter=3
-app.get ('/api/query', (req, res) => {
-   var me = req.query.me;
-   console.log(me);
-   res.send(req.query);
-   //res.send('query received: ' + req.query);
-});*/
-
-/*
-app.get ('/api/insertTeacher', (req, res) => {
-   dbInsert('teachers', req.query);
-   res.send('OK');
-});*/
-
 app.get ('/api/:pass/:tblName/:operation/:filterOrJson/:json', (req, res) => {
    var tblName = req.params.tblName;
    var operation = req.params.operation;
    var filterOrJson = req.params.filterOrJson;
    var json = req.params.json;
-   
-   if (pass != null && pass == passCode){
-      if (tblName != null){
-         if (operation != null){
-            if (operation == "query"){
-               dbQuery(res, tblName, filterOrJson);
-            }
-            else if (operation == "new"){
-               dbInsert(res, tblName, filterOrJson);
-            }
-            else if (operation == "update"){
-               dbUpdate(res, tblName, filterOrJson, json);
-            }
-            else if (operation == "replace"){
-               //TODO:  implement this function
-               //dbReplace(res, tblName, filterOrJson, json);
-            }
-            else if (operation == "delete"){
-               dbDelete(res, tblName, filterOrJson);
-            }
-            else {
-               res.send("Invalid operation - must be one of: (query, new, update, delete, createTable, deleteTable)");
-            }
+   if (pass != null && pass == passCode && tblName != null){
+     if (operation != null){
+         if (operation == "query"){
+             dbQuery(res, tblName, filterOrJson);
+         }
+         else if (operation == "new"){
+             dbInsert(res, tblName, filterOrJson);
+         }
+         else if (operation == "update"){
+             dbUpdate(res, tblName, filterOrJson, json);
+         }
+         else if (operation == "replace"){
+             //TODO:  implement this function
+             //dbReplace(res, tblName, filterOrJson, json);
+         }
+         else if (operation == "delete"){
+             dbDelete(res, tblName, filterOrJson);
          }
          else {
-            dbGetAll(res, tblName);
+             res.send("Invalid operation - must be one of: (query, new, update, delete, createTable, deleteTable)");
          }
       }
       else {
-         res.send("?");
+         dbGetAll(res, tblName);
       }
+   }
+   else {
+      res.send("?");
    }
 });
 
@@ -326,11 +280,6 @@ app.get('/smashGlass/:pass/:database/:operation/:filter', (req, res) => {
       }
    }
    res.send("OK");
-});
-
-app.get ('/api/dbinit', (req, res) => {
-   dbInit();
-   res.send('OK');
 });
 
 module.exports = app;
