@@ -38,12 +38,20 @@ Now find the port it's listening on:
 and/or
 "ss -taulpn"
 
-Edit app.js again and change the value of rethinkdbPort to the port that rethinkDB's docker container port 28015 is mapped to.
-(also change the passCode to a random guid - this gives you your own security layer so only you can interact directly with your db from your browser)
+Create a new file called "rethinkDB.config"
+Contents should be as follows (include the brackets but not the dashed lines - pay attention to the values below...you have to change them to your own):
+-----------------------------
+{
+   "Port":  "the port number you found above",
+   "Host":  "localhost",
+   "DatabaseName":  "test",
+   "PassCode":  "your random guid - you can just mash a bunch of keys to make it - make it long"
+}
+------------------------------
+You may want to make a .gitignore file and put the name of the above file, rethinkDB.config, in it so that if you commit this to your own repo, it won't be included.
 
----------------
-
-If you want to test it locally on your machine for development / debugging (make sure port 80 is NOT open on your OS firewall):
+------------------------------
+If you want to test this locally on your machine for development (make sure port 80 is NOT open on your OS firewall):
 
 "nodemon app.js"  --> this is not secure if it's a publicly open port, because it will be transmitted over http instead of https
 
