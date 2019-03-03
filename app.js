@@ -8,6 +8,7 @@ var app = express();
 var rethinkdbHost = 'localhost';
 var rethinkdbDatabaseName = 'test';
 var rethinkdbPort = 32772;
+var passCode = "SetThisToSomeRandomGUID"; //This provides a thin layer of extra security to keep out newb hackers
 
 //TODO:  Make a dbinit function that first checks for the dbName, creates it if it doesn't exist, then makes the connection here.
 var r = require('rethinkdbdash')({
@@ -30,10 +31,48 @@ function dbCreate(dbName){
    r.dbCreate(dbName)
      .run()
      .then(function(response){
-        console.log(response);
+        sendDbMsg(res, response, "dbCreate(" + dbName + ") success");
      })
      .error(function(error){
-        console.log('An error occurred during database creation at app.js dbCreate(): ', error);
+        sendDbMsg(res, 'Got an error', "dbCreate(" + dbName + "): " + error);
+     });
+}
+
+function dbDelete(dbName){
+   r.dbDrop(dbName)
+     .run()
+     .then(function(response){
+        sendDbMsg(res, response, "dbDelete(" + dbName + ") success");
+
+     })
+     .error(function(error){
+        sendDbMsg(res, 'Got an error', "dbDelete(" + dbName + "): " + error);
+     });
+}
+
+//https://www.rethinkdb.com/api/javascript/db_list/
+function dbList(res){
+   r.dbList()
+     .run()
+     .then(function(response){
+        sendDbMsg(res, response, "dbList() success");
+     })
+     .error(function(error){
+        sendDbMsg(res, 'Got an error', "dbList(): " + error);
+     });
+}
+
+//Not sure about this one
+//It may instead just be a matter of setting r.db = dbName
+//I saw one example in response to a question on stackoveflow:  https://stackoverflow.com/questions/43229735/how-to-mock-rethinkdb-for-unit-test-my-daos-in-nodejs/45758781#45758781
+function dbSwitch(dbName){
+   r.use(dbName)
+     .run()
+     .then(function(response){
+        sendDbMsg(res, 'Switch db success', "dbSwitch(" + dbName + ") success");
+     })
+     .error(function(error){
+        sendDbMsg(res, 'Got an error', "dbSwitch(" + dbName + "): " + error);
      });
 }
 
@@ -48,10 +87,10 @@ function dbCreateTable(tblName){
    r.tableCreate(tblName, { primaryKey: 'id' })
      .run()
      .then(function(response){
-        console.log('dbCreateTable() success: ', response);
+        sendDbMsg(res, 'Create table success', "dbCreateTable(" + tblName + ") success");
      })
      .error(function(error){
-        console.log('An error occurred app.js dbCreateTable(): ', error);
+        sendDbMsg(res, 'Got an error', "dbCreateTable(" + tblName + "): " + error);
      });
 }
 
@@ -59,10 +98,10 @@ function dbDeleteTable(tblName){
    r.tableDrop(tblName)
      .run()
      .then(function(response){
-        console.log('dbDeleteTable() success: ', response);
+        sendDbMsg(res, 'Delete table success', "dbDeleteTable(" + tblName + ") success");
      })
      .error(function(error){
-        console.log('An error occurred app.js dbDeleteTable(), table ' + tblName + ': ', error);
+        sendDbMsg(res, 'Got an error', "dbDeleteTable(" + tblName + "): " + error);
      });
 }
 
@@ -72,30 +111,25 @@ function dbInsert(tblName, json){
      .insert(json)
      .run()
      .then(function(response){
-        console.log('dbInsert() success: ', response);
+        sendDbMsg(res, 'Insert success', "dbInsert(" + tblName + ") success");
      })
      .error(function(error){
-        console.log('An error occurred at app.js dbInsert(): ', error);
+        sendDbMsg(res, "Got an error", "dbInsert(" + tblName + "): " + error);
      });
 }
 
 function dbGetAll(tblName, res){
-   var returnResponse = "No rows exist.";
+   const noRows = "No rows exist.";
    r.table(tblName)
      .run()
      .then(function(response){
         if (response != null && response.length > 0){
-           returnResponse = JSON.stringify(response);
+           res.send(noRows);
         }
-        console.log('dbGetAll() success on table: ' + tblName + ', ' + returnResponse);
-        res.send(returnResponse);
+        sendDbMsg(res, response, "dbGetAll(" + tblName + ") success");
      })
      .error(function(error){
-        consoleLog = 'An error occurred at app.js dbGetAll(' + tblName + '): ', error;
-        console.log(consoleLog);
-
-        returnResponse = 'An error occurred attempting to retrieve the table';
-        res.send(returnResponse);
+        sendDbMsg(res, "Got an error", "dbGetAll(" + tblName + "): " + error);
      });
 }
 
@@ -106,11 +140,10 @@ function dbGetById(res, tblName, id){
       .get(id)
       .run()
       .then(function(response){
-        console.log('dbGetById() success: ', response);
-        res.send(JSON.stringify(response));
+         sendDbMsg(res, response, "dbGetById(" + tblName + ") success");
       })
       .error(function(error){
-         sendDbMsg(res, "Got an error", "dbGetById() " + error);
+         sendDbMsg(res, "Got an error", "dbGetById(): " + error);
       });
 }
 
@@ -122,10 +155,10 @@ function dbQuery(res, tblName, filter){
       .filter(db.row(filter))
       .run()
       .then(function(response){
-         sendDbMsg(res, JSON.stringify(response), "dbQuery() success" + tblName + ", " + json);
+         sendDbMsg(res, JSON.stringify(response), "dbQuery() success" + tblName + ", " + filter);
       })
       .error(function(error){
-         sendDbMsg(res, "Got an error", "dbQuery() error" + tblName + ", " + json);
+         sendDbMsg(res, "Got an error", "dbQuery() error" + tblName + ", " + filter);
       });
 }
 
@@ -208,12 +241,13 @@ app.get ('/api/insertTeacher', (req, res) => {
    res.send('OK');
 });*/
 
-app.get ('/api/:tblName/:operation/:filterOrJson/:json', (req, res) => {
+app.get ('/api/:pass/:tblName/:operation/:filterOrJson/:json', (req, res) => {
    var tblName = req.params.tblName;
    var operation = req.params.operation;
    var filterOrJson = req.params.filterOrJson;
    var json = req.params.json;
    
+   if (pass != null && pass == passCode){
    if (tblName != null){
       if (operation != null){
          if (operation == "query"){
@@ -243,19 +277,20 @@ app.get ('/api/:tblName/:operation/:filterOrJson/:json', (req, res) => {
    else {
       res.send("?");
    }
+   }
 });
 
-app.get('/smashGlass/:database/:operation/:filter', (req, res) => {
+app.get('/smashGlass/:pass/:database/:operation/:filter', (req, res) => {
    var database = req.params.database;
    var operation = req.params.operation;
 
+   if (pass != null && pass == passCode){
    if (database != null){
       if (operation == "switch" && filter != null){
-         //find code to switch database of connection
-         //implement a separate method for that and call it here
+         dbSwitch(filter);
       }
       else if (operation == "listDatabases"){
-         //https://www.rethinkdb.com/api/javascript/db_list/
+         dbList();
       }
       else if (operation == "createDb" && filter != null){
          dbCreate(filter);
@@ -265,7 +300,7 @@ app.get('/smashGlass/:database/:operation/:filter', (req, res) => {
          //https://www.rethinkdb.com/api/javascript/db_drop/
       }
       else if (operation == "listTables"){
-         //https://www.rethinkdb.com/api/javascript/table_list/
+         dbList(res);
       }
       else if (operation == "createTable" && filter != null){
          dbCreateTable(res, filter);
@@ -289,8 +324,9 @@ app.get('/smashGlass/:database/:operation/:filter', (req, res) => {
          //filter should have how many backups to keep.  Backups further back than that would be removed.
       }
    }
+   }
    res.send("OK");
-}
+});
 
 app.get ('/api/dbinit', (req, res) => {
    dbInit();
