@@ -27,9 +27,6 @@ nodeCleanup(function (exitCode, signal) {
 });
 
 
-//This will cause problems if I try to do it with the rest - the way the examples I've seen for rethinkdbdash work,
-//The context needs to be given an existing database or none at all - with none, you can do this. 
-/*
 function dbCreate(dbName){
    r.dbCreate(dbName)
      .run()
@@ -39,17 +36,16 @@ function dbCreate(dbName){
      .error(function(error){
         console.log('An error occurred during database creation at app.js dbCreate(): ', error);
      });
-}*/
+}
 
-//This will have to be called to run, I think I'll make an Express route for it, and we can initialize the database from our browsers by calling that url.
 function dbInit(){
-   tables = ['courses', 'students', 'teachers'];
+   var tables = ['courses', 'students', 'teachers'];
    for (var i = 0; i < tables.length; i++){
-     dbTableCreate(tables[i]);
+     dbCreateTable(tables[i]);
    }
 }
 
-function dbTableCreate(tblName){
+function dbCreateTable(tblName){
    r.tableCreate(tblName, { primaryKey: 'id' })
      .run()
      .then(function(response){
@@ -77,10 +73,15 @@ function dbGetAll(tblName){
    r.table(tblName)
      .run()
      .then(function(response){
-        console.log('dbGetAll() success: ', response);
+        console.log('dbGetAll() success on table: ' + tblName);
+        return response;
      })
      .error(function(error){
-        console.log('An error occurred at app.js dbGetAll(' + tblName + '): ', error);
+        consoleLog = 'An error occurred at app.js dbGetAll(' + tblName + '): ', error;
+        console.log(consoleLog);
+
+        errorResponse = 'An error occurred attempting to retrieve the table';
+        return errorResponse
      });
 }
 
@@ -144,6 +145,23 @@ app.get ('/api/query', (req, res) => {
    console.log(me);
    res.send(req.query);
    //res.send('query received: ' + req.query);
+});
+
+app.get('/api/createTable/:tableName', (req, res) => {
+   if (req.params.tableName != null){
+      dbCreateTable(req.params.tableName); 
+   }
+   res.send('OK');
+});
+
+app.get ('/api/getall/:tableName', (req, res) => {
+   var tblName = req.params.tableName;
+   if (tblName != null){
+      res.send(dbGetAll(tblName));
+   }
+   else {
+      res.send('Please specify a table name');
+   }
 });
 
 app.get ('/api/insertStudent', (req, res) => {
