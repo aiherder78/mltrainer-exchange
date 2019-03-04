@@ -10,9 +10,7 @@ var rdb = function() {
 //var rdb = new rethink();
 var rdb = require("./rdb.js");
 
-console.log(rdb.GetPassCode());
-
-//var passCode = rdb.GetPassCode();
+var passCode = rdb.GetPassCode();
 
 //Database stuff is done,
 //Let's do some Express routes:
