@@ -147,61 +147,61 @@ module.exports = function() {
      		});
 	}
 
-function dbReplace(res, tblName, json){
-    r.table(tblName)
-      .get(json.id)
-      .replace(json)
-      .run()
-      .then(function(response){
-         sendDbMsg(res, response, "dbGetById(" + tblName + ") success");
-      })
-      .error(function(error){
-         sendDbMsg(res, "Got an error", "dbGetById(): " + error);
-      });
-}
+	this.rdbReplace = function dbReplace(res, tblName, json){
+	    r.table(tblName)
+	      .get(json.id)
+	      .replace(json)
+	      .run()
+	      .then(function(response){
+		 sendDbMsg(res, response, "dbGetById(" + tblName + ") success");
+	      })
+	      .error(function(error){
+		 sendDbMsg(res, "Got an error", "dbGetById(): " + error);
+	      });
+	}
 
-function dbQuery(res, tblName, filter){
-    //r.table(tblName).filter(db.row(json).downcase().match(title.toLowerCase()));   //TODO:  Figure out how to perform lowercase match for every property
-    r.table(tblName)
-      .filter(db.row(filter))
-      .run()
-      .then(function(response){
-         sendDbMsg(res, JSON.stringify(response), "dbQuery() success" + tblName + ", " + filter);
-      })
-      .error(function(error){
-         sendDbMsg(res, "Got an error", "dbQuery() error" + tblName + ", " + filter);
-      });
-}
+	this.dbQuery = function dbQuery(res, tblName, filter){
+	    //r.table(tblName).filter(db.row(json).downcase().match(title.toLowerCase()));   //TODO:  Figure out how to perform lowercase match for every property
+	    r.table(tblName)
+	      .filter(db.row(filter))
+	      .run()
+	      .then(function(response){
+		 sendDbMsg(res, JSON.stringify(response), "dbQuery() success" + tblName + ", " + filter);
+	      })
+	      .error(function(error){
+		 sendDbMsg(res, "Got an error", "dbQuery() error" + tblName + ", " + filter);
+	      });
+	}
 
-function dbUpdate(res, tblName, filter, json){
-    r.table(tblName)
-      .filter(db.row(filter))
-      .update(json)
-      .run()
-      .then(function(response){
-         sendDbMsg(res, JSON.stringify(response), "dbUpdate() success" + tblName + ", filter:: " + filter + ", update:: " + json);
-      })
-      .error(function(error){
-         sendDbMsg(res, "Got an error", "dbUpdate() error" + tblName + ", filter:: " + filter + ", update::" + json);
-      });
-}
+	this.dbUpdate = function dbUpdate(res, tblName, filter, json){
+	    r.table(tblName)
+	      .filter(db.row(filter))
+	      .update(json)
+	      .run()
+	      .then(function(response){
+		 sendDbMsg(res, JSON.stringify(response), "dbUpdate() success" + tblName + ", filter:: " + filter + ", update:: " + json);
+	      })
+	      .error(function(error){
+		 sendDbMsg(res, "Got an error", "dbUpdate() error" + tblName + ", filter:: " + filter + ", update::" + json);
+	      });
+	}
 
-function sendDbMsg(res, message, methodCaller){
-    console.log(methodCaller + ":: " + message);
-    res.send(message);
-}
+	this.sendDbMsg = function sendDbMsg(res, message, methodCaller){
+	    console.log(methodCaller + ":: " + message);
+	    res.send(message);
+	}
 
-function dbDelete(res, tblName, filter){
-    r.table(tblName)
-      .filter(db.row(filter))
-      .delete()
-      .run()
-      .then(function(response){
-         sendDbMsg(res, JSON.stringify(response), "dbDelete() success" + tblName + ", filter:: " + filter);
-      })
-      .error(function(error){
-         sendDbMsg(res, "Got an error during delete", "dbDelete() error" + tblName + ", filter:: " + filter);
-      });
-}
+	this.dbDelete = function dbDelete(res, tblName, filter){
+	    r.table(tblName)
+	      .filter(db.row(filter))
+	      .delete()
+	      .run()
+	      .then(function(response){
+		 sendDbMsg(res, JSON.stringify(response), "dbDelete() success" + tblName + ", filter:: " + filter);
+	      })
+	      .error(function(error){
+		 sendDbMsg(res, "Got an error during delete", "dbDelete() error" + tblName + ", filter:: " + filter);
+	      });
+	}
 
 } //end module.export function
