@@ -6,7 +6,7 @@ var app = express();
 var rdb = function() {
    require('./rdb.js');
 }*/
-var rdb = require("./rdb.js");
+var rdb = require("./rdb.js")();
 
 console.log(rdb.GetPassCode());
 
