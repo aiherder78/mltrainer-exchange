@@ -6,8 +6,9 @@ var app = express();
 var rdb = function() {
    require('./rdb.js');
 }*/
-var rethink = require("./rdb.js");
-var rdb = new rethink();
+//var rethink = require("./rdb.js");
+//var rdb = new rethink();
+var rdb = require("./rdb.js");
 
 console.log(rdb.GetPassCode());
 
@@ -82,11 +83,12 @@ app.get('/smashGlass/:pass/:database/:operation/:filter', (req, res) => {
             rdb.dbList();
          }
          else if (operation == "createDb" && filter != null){
-            rdb.dbCreate(filter);
+            rdb.dbCreateDatabase(filter);
          }
          else if (operation == "deleteDb" && filter != null){
             //Perform a db backup first, send a two-factor auth first & get approval before deleting
             //https://www.rethinkdb.com/api/javascript/db_drop/
+            rdb.dbDropDatabase(filter);
          }
          else if (operation == "listTables"){
             rdb.dbList(res);
