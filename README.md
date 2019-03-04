@@ -73,10 +73,15 @@ DONE:  Finish database method refactoring / putting db methods in a separate mod
 Possibly switch to an ORM like Thinky:  https://github.com/neumino/thinky
 
 TODO:  Test all database methods.  Make sure dbSwitch() works or get it working.
+
 TODO:  Review security - add a nonce to mitigate against any possible replay attacks.
+
 TODO:  Add views.
+
 TODO:  Add on Angular or React or some other SPA (I need to do more tutorials while doing this)
+
 TODO:  Add user registration & login
+
 TODO:  Add file upload
 
 
