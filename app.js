@@ -2,11 +2,13 @@
 
 var express = require('express');
 var app = express();
+/*
 var rdb = function() {
    require('./rdb.js');
-}
+}*/
+var rdb = require("./rdb.js");
 
-//console.log(JSON.stringify(rdb));
+console.log(rdb.GetPassCode());
 
 //var passCode = rdb.GetPassCode();
 
