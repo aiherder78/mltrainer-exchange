@@ -1,5 +1,6 @@
 'use strict';
 
+const path = require('path');
 var express = require('express');
 var app = express();
 /*
@@ -16,7 +17,8 @@ var passCode = rdb.GetPassCode();
 //Let's do some Express routes:
 app.get ('/', (req, res) => {
    res.setHeader('Context-Type', 'text/html; charset=utf-8');
-   res.send('Hello World 2!');
+   //res.sendFile('./html/main.html', {root: __dirname}); //works, but I think it's ugly
+   res.sendFile(path.join(__dirname + '/html/main.html'));  //Does not work.  I wonder why? (path not defined)
 });
 
 //Positional paramters
