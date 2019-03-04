@@ -20,13 +20,14 @@ app.get ('/', (req, res) => {
 });
 
 //Positional paramters
+//Example url:  https://metaquest.org/IdontHaveAurl/Sue
 app.get ('/IdontHaveAurl/:arbitraryString', (req, res) => {
    var name = req.params.arbitraryString;
-   //var query = req.query;
-   res.send('OK' + name);
+   res.send('OK ' + name);
 });
 
 //Query string
+//Example url:  https://metaquest.org/api2?name=Bob&age=40
 app.get ('/api2', (req, res) => {
    var name = req.query.name;
    var age = req.query.age;
