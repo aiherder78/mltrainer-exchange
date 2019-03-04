@@ -19,7 +19,7 @@ module.exports = function() {
 var fs = require('fs');
 var rethinkdbConfig = JSON.parse(fs.readFileSync('rethinkDB.config', 'utf8'));
 
-function GetPassCode(){
+var GetPassCode = function GetPassCode(){
    return rethinkdbConfig.PassCode;
 }
 
