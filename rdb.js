@@ -13,7 +13,7 @@ exports.dbReplace = dbReplace;
 exports.dbQuery = dbQuery;
 exports.dbUpdate = dbUpdate;
 */
-module.exports = function(){
+module.exports = {
 
 //Load the rethinkdb settings
 var fs = require('fs');
