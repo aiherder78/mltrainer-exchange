@@ -20,7 +20,8 @@
      "express": "^4.16.3",
      "greenlock-express":  "^2.0.11",
      "rethinkdbdash": "^2.3.31",
-     "node-cleanup": "^2.1.2"
+     "node-cleanup": "^2.1.2",
+     "path": "^0.12.7"
    },
    "dependenciesComments": {
      "greenlock-express": "https://github.com/Daplie/greenlock-express/, AJ ONeal <aj@daplie.com> (https://daplie.com/), MIT or Apache 2.0"
