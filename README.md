@@ -65,9 +65,8 @@ If you want to test this locally on your machine for development (make sure port
 
 -----------------------------------------------------------------------------------------------------------------------
 Notes:
-DONE:
-I was watching Youtube videos / tutorials on Thinky ( https://www.youtube.com/watch?v=d01rLeIjTLE ), and I found that the driver that Thinky uses, rethinkdbdash ( https://github.com/neumino/rethinkdbdash ) is much better than the one I was using (npm install rethinkdb).  Rethinkdbdash has a connection pool and automatically connects / stays available, unlike rethinkdb driver.  
-I have switched out the standard rethinkdb driver for this one, as well as added a cleanup method so you can easily kill the process and not mess up the db.
+
+DONE:   I was watching Youtube videos / tutorials on Thinky ( https://www.youtube.com/watch?v=d01rLeIjTLE ), and I found that the driver that Thinky uses, rethinkdbdash ( https://github.com/neumino/rethinkdbdash ) is much better than the one I was using (npm install rethinkdb).  Rethinkdbdash has a connection pool and automatically connects / stays available, unlike rethinkdb driver.  I have switched out the standard rethinkdb driver for this one, as well as added a cleanup method so you can easily kill the process and not mess up the db.
 
 DONE:  Finish database method refactoring / putting db methods in a separate module
 Possibly switch to an ORM like Thinky:  https://github.com/neumino/thinky
@@ -83,5 +82,3 @@ TODO:  Add on Angular or React or some other SPA (I need to do more tutorials wh
 TODO:  Add user registration & login
 
 TODO:  Add file upload
-
-
