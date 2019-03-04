@@ -17,7 +17,7 @@ module.exports = function() {
 
 	//Load the rethinkdb settings
 	this.fs = require('fs');
-	this. rethinkdbConfig = JSON.parse(fs.readFileSync('rethinkDB.config', 'utf8'));
+	this.rethinkdbConfig = JSON.parse(fs.readFileSync('rethinkDB.config', 'utf8'));
 
 	this.GetPassCode = function GetPassCode(){
    		return rethinkdbConfig.PassCode;
