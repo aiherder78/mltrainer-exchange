@@ -3,6 +3,8 @@
 const path = require('path');
 var express = require('express');
 var app = express();
+
+app.set('view engine', 'pug');
 /*
 var rdb = function() {
    require('./rdb.js');
@@ -18,7 +20,11 @@ var passCode = rdb.GetPassCode();
 app.get ('/', (req, res) => {
    res.setHeader('Context-Type', 'text/html; charset=utf-8');
    //res.sendFile('./html/main.html', {root: __dirname}); //works, but I think it's ugly
-   res.sendFile(path.join(__dirname + '/html/main.html'));  //Does not work.  I wonder why? (path not defined)
+   //res.sendFile(path.join(__dirname + '/html/main.html')); //better, but I want to use pug directly
+   //For this to work, must have the line above: "app.set('view engine', 'pug');
+   res.render(path.join(__dirname + '/pugFiles/main.pug'), {});
+   //For the above, if we have any variables we want to pass in, we can put them in the brackets
+   //(the brackets encapsulate the JSON object we pass to the templating engine, pug.
 });
 
 //Positional paramters
