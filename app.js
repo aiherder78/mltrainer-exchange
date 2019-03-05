@@ -46,7 +46,7 @@ app.get ('/api/:pass/:tblName/:operation/:filterOrJson/:json', (req, res) => {
    var pass = req.params.pass;
    var tblName = req.params.tblName;
    var operation = req.params.operation;
-   var filterOrJson = req.params.filterOrJson;
+   var filterOrJson = JSON.parse(req.params.filterOrJson);
    var json = req.params.json;
    if (pass != null && pass == passCode && tblName != null){
      if (operation != null){
