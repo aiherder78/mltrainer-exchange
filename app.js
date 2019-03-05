@@ -66,7 +66,8 @@ app.get ('/api/:pass/:tblName/:operation/:filterOrJson/:json', (req, res) => {
              rdb.dbDelete(res, tblName, filterOrJson);
          }
          else {
-             res.send("Invalid operation - must be one of: (query, new, update, delete, createTable, deleteTable)");
+             //res.send("Invalid operation - must be one of: (query, new, update, delete, createTable, deleteTable)");
+            rdb.dbGetAll(res, tblName);
          }
       }
       else {
