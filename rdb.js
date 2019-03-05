@@ -134,7 +134,7 @@ function dbInsert(res, tblName, json){
 //This deletes records from a table
 function dbDelete(res, tblName, filter){
     r.table(tblName)
-      .filter(db.row(filter))
+      .filter(filter)
       .delete()
       .run()
       .then(function(response){
@@ -179,7 +179,7 @@ function dbReplace(res, tblName, json){
 function dbQuery(res, tblName, filter){
     //r.table(tblName).filter(db.row(json).downcase().match(title.toLowerCase()));   //TODO:  Figure out how to perform lowercase match for every property
     r.table(tblName)
-      .filter(db.row(filter))
+      .filter(filter)
       .run()
       .then(function(response){
 	 sendDbMsg(res, JSON.stringify(response), "dbQuery() success" + tblName + ", " + filter);
