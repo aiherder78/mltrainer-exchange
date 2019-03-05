@@ -120,7 +120,7 @@ function dbDeleteTable(tblName){
 //With NoSQL type databases, you always just insert JSON objects (or an array of them) and don't have to worry about specific schema / columns on a table.  That can be good and/or bad.  You'll see.
 function dbInsert(res, tblName, json){
 	r.table(tblName)
-	.insert(json)
+	.insert(json, conflict = "error")
 	.run()
 	.then(function(response){
 		sendDbMsg(res, 'Insert success', "dbInsert(" + tblName + ") success");
