@@ -43,6 +43,7 @@ app.get ('/api2', (req, res) => {
 });
 
 app.get ('/api/:pass/:tblName/:operation/:filterOrJson/:json', (req, res) => {
+   var pass = req. params.pass;
    var tblName = req.params.tblName;
    var operation = req.params.operation;
    var filterOrJson = req.params.filterOrJson;
@@ -78,9 +79,10 @@ app.get ('/api/:pass/:tblName/:operation/:filterOrJson/:json', (req, res) => {
 });
 
 app.get('/smashGlass/:pass/:database/:operation/:filter', (req, res) => {
+   var pass =req.params.pass;
    var database = req.params.database;
    var operation = req.params.operation;
-
+   var filter = req.params.filter;
    if (pass != null && pass == passCode){
       if (database != null){
          if (operation == "switch" && filter != null){
