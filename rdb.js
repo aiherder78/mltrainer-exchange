@@ -146,14 +146,14 @@ function dbDelete(res, tblName, filter){
 }
 
 //Public
-function dbGetAll(tblName, res){
+function dbGetAll(res, tblName){
 	const noRows = "No rows exist.";
 	r.table(tblName)
 	.run()
 	.then(function(response){
-		if (response != null && response.length > 0){
-		res.send(noRows);
-	}
+		if (response == null || response.length == 0){
+			res.send(noRows);
+		}
 		sendDbMsg(res, response, "dbGetAll(" + tblName + ") success");
 	})
 	.error(function(error){
@@ -192,7 +192,7 @@ function dbQuery(res, tblName, filter){
 //Public
 function dbUpdate(res, tblName, filter, json){
     r.table(tblName)
-      .filter(db.row(filter))
+      .filter(filter)
       .update(json)
       .run()
       .then(function(response){
