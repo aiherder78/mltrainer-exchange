@@ -217,6 +217,7 @@ module.exports.dbInit = dbInit;
 module.exports.dbCreateTable = dbCreateTable;
 module.exports.dbDeleteTable = dbDeleteTable;
 module.exports.dbInsert = dbInsert;
+module.exports.dbDelete = dbDelete;
 module.exports.dbGetAll = dbGetAll;
 module.exports.dbReplace = dbReplace;
 module.exports.dbQuery = dbQuery;
