@@ -74,6 +74,8 @@ TODO:  Test all database methods.  Make sure dbSwitch() works or get it working.
 
 TODO:  Review security - add a nonce to mitigate against any possible replay attacks.
 
+TODO:  Work on site CSS - front page needs a major facelift.  The description needs to be formatted and fitted to a better area.
+
 TODO:  Add views.
 
 TODO:  Add on Angular or React or some other SPA (I need to do more tutorials while doing this)
