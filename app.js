@@ -90,7 +90,7 @@ app.get('/smashGlass/:pass/:database/:operation/:filter', (req, res) => {
             rdb.dbSwitch(filter);
          }
          else if (operation == "listDatabases"){
-            rdb.dbList();
+            rdb.dbList(res);
          }
          else if (operation == "createDb" && filter != null){
             rdb.dbCreateDatabase(filter);
