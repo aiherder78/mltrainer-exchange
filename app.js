@@ -60,7 +60,7 @@ app.get ('/api/:pass/:tblName/:operation/:filterOrJson/:json', (req, res) => {
              rdb.dbUpdate(res, tblName, filterOrJson, json);
          }
          else if (operation == "replace"){
-             rdb.dbReplace(res, tblName, json);
+             rdb.dbReplace(res, tblName, filterOrJson);
          }
          else if (operation == "delete"){
              rdb.dbDelete(res, tblName, filterOrJson);
