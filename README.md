@@ -1,5 +1,5 @@
 # MLtrainer-Exchange
-Template solution to serve as front-end for machine learning hardware
+Template solution to serve as front-end for machine learning services
 
 With many thanks to AJ O'Neal, creator of Greenlock-Express, Mosh, for his awesome Express tutorials, and the folks at RethinkDB.
 
