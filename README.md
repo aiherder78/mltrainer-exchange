@@ -70,7 +70,7 @@ DONE:   I was watching Youtube videos / tutorials on Thinky ( https://www.youtub
 
 DONE:  Finish database method refactoring / putting db methods in a separate module
 
-TODO:  Test all database methods.  Make sure dbSwitch() works or get it working.
+TODO:  Test all database methods (all row level operations tested/fixed, database level operations still need to be done).  Make sure dbSwitch() works or get it working.
 
 TODO:  Review security - add a nonce to mitigate against any possible replay attacks.
 
